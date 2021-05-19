@@ -15,6 +15,12 @@ app.use(bodyParser.json());
 
 // app.use(cors(corsOptions));
 
+app.all('*', (req, res) => {
+  if (process.env.NGROK_URL) {
+    res.redirect(process.env.NGROK_URL);
+  }
+});
+
 app.get('/', (req, res, next) =>
   res.send('whats up this is an app made by kdawg')
 );
