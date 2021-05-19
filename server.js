@@ -15,7 +15,9 @@ app.use(bodyParser.json());
 
 // app.use(cors(corsOptions));
 
-app.get('/', (req, res, next) => res.send('hello'));
+app.get('/', (req, res, next) =>
+  res.send('whats up this is an app made by kdawg')
+);
 
 app.post('/fbmwebhook', (req, res) => {
   const { body } = req;
@@ -41,7 +43,7 @@ app.post('/fbmwebhook', (req, res) => {
 // Adds support for GET requests to our webhook
 app.get('/fbmwebhook', (req, res) => {
   // Your verify token. Should be a random string.
-  const VERIFY_TOKEN = 'somestring';
+  const VERIFY_TOKEN = process.env.FBM_VERIFY_TOKEN;
 
   // Parse the query params
   const mode = req.query['hub.mode'];
