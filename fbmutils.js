@@ -94,7 +94,7 @@ export const handlePostback = (sender_psid, received_postback) => {
           buttons: [
             {
               type: 'web_url',
-              url: 'https://www.messenger.com/',
+              url: 'https://fbchatbot-ui.herokuapp.com/',
               title: 'URL Button',
               webview_height_ratio: 'full',
             },
