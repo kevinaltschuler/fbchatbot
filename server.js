@@ -13,11 +13,35 @@ app.use(cors());
 
 app.use(bodyParser.json());
 
+const reviews = [];
+
 app.post('/save-request', (req, res) => {
   console.log('Got the review:', req.body);
+  const {
+    data: { review, starValue },
+  } = req.body;
   // const reviewDoc = await Review.create({ text: req.body.text });
   // await reviewDoc.save()
+
+  reviews.push(starValue);
+  console.log(reviews);
   res.sendStatus(200);
+});
+
+app.get('/review-avg', (req, res) => {
+  const avg =
+    reviews.reduce((acc, val) => {
+      return acc + val;
+    }, 0) / reviews.length;
+
+  console.log(avg);
+
+  res.send(
+    JSON.stringify({
+      reviewCount: reviews.length,
+      avg,
+    })
+  );
 });
 
 app.get('/', (req, res, next) =>
