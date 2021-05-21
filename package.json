@@ -4,7 +4,8 @@
     "cors": "^2.8.5",
     "dotenv": "^9.0.2",
     "express": "^4.17.1",
-    "helmet": "^4.6.0"
+    "helmet": "^4.6.0",
+    "request": "^2.88.2"
   },
   "name": "fbchatbot",
   "description": "",

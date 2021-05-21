@@ -2,6 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 
 import dotenv from 'dotenv';
+import { handleMessage, handlePostback } from './fbmutils.js';
 
 dotenv.config();
 // create the app server
@@ -15,10 +16,11 @@ app.use(bodyParser.json());
 
 // app.use(cors(corsOptions));
 
-app.all('*', (req, res) => {
-  if (process.env.NGROK_URL) {
-    res.redirect(process.env.NGROK_URL);
-  }
+app.post('/save-request', (req, res) => {
+  console.log('Got the review:', req.body);
+  // const reviewDoc = await Review.create({ text: req.body.text });
+  // await reviewDoc.save()
+  res.sendStatus(200);
 });
 
 app.get('/', (req, res, next) =>
@@ -32,39 +34,40 @@ app.post('/fbmwebhook', (req, res) => {
   if (body.object === 'page') {
     // Iterates over each entry - there may be multiple if batched
     body.entry.forEach((entry) => {
-      // Gets the message. entry.messaging is an array, but
-      // will only ever contain one message, so we get index 0
       const webhookEvent = entry.messaging[0];
       console.log(webhookEvent);
+
+      // Get the sender PSID
+      const senderPsid = webhookEvent.sender.id;
+      console.log(`Sender PSID: ${senderPsid}`);
+
+      // Check if the event is a message or postback and
+      // pass the event to the appropriate handler function
+      if (webhookEvent.message) {
+        handleMessage(senderPsid, webhookEvent.message);
+      } else if (webhookEvent.postback) {
+        handlePostback(senderPsid, webhookEvent.postback);
+      }
     });
 
-    // Returns a '200 OK' response to all requests
     res.status(200).send('EVENT_RECEIVED');
   } else {
-    // Returns a '404 Not Found' if event is not from a page subscription
     res.sendStatus(404);
   }
 });
 
-// Adds support for GET requests to our webhook
 app.get('/fbmwebhook', (req, res) => {
-  // Your verify token. Should be a random string.
   const VERIFY_TOKEN = process.env.FBM_VERIFY_TOKEN;
 
-  // Parse the query params
   const mode = req.query['hub.mode'];
   const token = req.query['hub.verify_token'];
   const challenge = req.query['hub.challenge'];
 
-  // Checks if a token and mode is in the query string of the request
   if (mode && token) {
-    // Checks the mode and token sent is correct
     if (mode === 'subscribe' && token === VERIFY_TOKEN) {
-      // Responds with the challenge token from the request
       console.log('WEBHOOK_VERIFIED');
       res.status(200).send(challenge);
     } else {
-      // Responds with '403 Forbidden' if verify tokens do not match
       res.sendStatus(403);
     }
   }
