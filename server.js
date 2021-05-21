@@ -2,19 +2,16 @@ import express from 'express';
 import bodyParser from 'body-parser';
 
 import dotenv from 'dotenv';
+import cors from 'cors';
 import { handleMessage, handlePostback } from './fbmutils.js';
 
 dotenv.config();
 // create the app server
 const app = express();
 
+app.use(cors());
+
 app.use(bodyParser.json());
-
-// const corsOptions = {
-//   origin: [`http://localhost:3000`],
-// };
-
-// app.use(cors(corsOptions));
 
 app.post('/save-request', (req, res) => {
   console.log('Got the review:', req.body);
