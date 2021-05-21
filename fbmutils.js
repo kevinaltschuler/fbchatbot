@@ -90,7 +90,7 @@ export const handlePostback = (sender_psid, received_postback) => {
         type: 'template',
         payload: {
           template_type: 'button',
-          text: 'Try the URL button!',
+          text: 'Click this to give us your data!',
           buttons: [
             {
               type: 'web_url',
